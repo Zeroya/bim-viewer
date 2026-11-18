@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# BIM Viewer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React BIM-style 3D viewer for inspecting building models in the browser. Switch between house models, toggle layers, measure distances, move or hide elements, cut sections, upload GLB/GLTF files, and merge scenes.
 
-## Available Scripts
+![Desktop overview](docs/screenshots/desktop.jpg)
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Preset models:** Modern Villa, Urban Townhouse, Glass Pavilion
+- **Layers:** show/hide, opacity, explode view
+- **Tools:** orbit, select, measure, move (gizmo), section cut
+- **Top command bar:** edges, wireframe, isolate selection, camera presets, merge/duplicate, screenshot, reset
+- **Upload:** drop `.glb` / `.gltf` models onto the scene
+- **Merge / duplicate** active models
+- **Responsive UI:** compact side panels on desktop, bottom sheet on mobile
+- **MUI + SCSS** theming (dark / light)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+![Tools: section & measure](docs/screenshots/tools.jpg)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Screenshots
 
-### `npm test`
+| Desktop | Mobile |
+| --- | --- |
+| ![Desktop](docs/screenshots/desktop.jpg) | ![Mobile](docs/screenshots/mobile.jpg) |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Quick start
 
-### `npm run build`
+```bash
+cd bim-viewer
+npm install
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Open [http://localhost:3000](http://localhost:3000).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Production build:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm run build
+```
 
-### `npm run eject`
+## Stack
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- React 19
+- MUI
+- React Three Fiber / Three.js / Drei
+- Zustand
+- SCSS
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Project layout
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+src/
+  components/
+    layout/     # shell, top bar, bottom toolbar
+    panels/     # models, layers, tools, properties, upload
+    viewer/     # canvas, elements, measure, section
+  data/         # preset procedural house models
+  store/        # zustand BIM state
+  styles/       # SCSS theme
+  theme/        # MUI theme
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Top toolbar actions
 
-## Learn More
+| Control | Action |
+| --- | --- |
+| Orbit / Select / Measure / Move | Active interaction mode |
+| Section | Enable clipping plane |
+| Edges / Wireframe | Display modes |
+| Isolate | Hide everything except selection |
+| Fit / Top / Front / Side | Camera presets |
+| Merge / Duplicate | Model operations |
+| Screenshot | Download PNG of the viewport |
+| Reset | Clear measures, section, explode, camera |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT

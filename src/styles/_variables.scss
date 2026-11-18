@@ -1,0 +1,15 @@
+$font-sans: 'DM Sans', 'Segoe UI', sans-serif;
+$font-display: 'Space Grotesk', 'DM Sans', sans-serif;
+
+$dark-bg: #0f1216;
+$dark-panel: #171b21;
+$dark-elevated: #1e242c;
+$accent: #5b9fd4;
+$accent-warm: #c4a574;
+
+$radius: 10px;
+$toolbar-h: 48px;
+$drawer-width: 300px;
+$bottom-offset: 20px;
+$safe-bottom: env(safe-area-inset-bottom, 0px);
+$safe-top: env(safe-area-inset-top, 0px);
