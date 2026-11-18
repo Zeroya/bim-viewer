@@ -14,13 +14,13 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import { useBimStore } from '../../store/bimStore';
 
-function Row({ label, value }) {
+function Row({ label, value }: { label: string; value: string }) {
   return (
-    <Stack direction="row" justifyContent="space-between" className="prop-row">
+    <Stack direction="row" className="prop-row" sx={{ justifyContent: 'space-between' }}>
       <Typography variant="caption" color="text.secondary">
         {label}
       </Typography>
-      <Typography variant="caption" fontWeight={600}>
+      <Typography variant="caption" sx={{ fontWeight: 600 }}>
         {value}
       </Typography>
     </Stack>
@@ -55,12 +55,12 @@ export default function PropertiesPanel() {
 
       {found && (
         <Box className="properties-panel__card">
-          <Stack direction="row" spacing={1} alignItems="center" mb={0.75}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.75 }}>
             <span
               className="layer-swatch"
               style={{ background: found.element.color || found.layer.color }}
             />
-            <Typography variant="body2" fontWeight={600}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
               {found.element.name}
             </Typography>
           </Stack>
@@ -70,7 +70,7 @@ export default function PropertiesPanel() {
           <Row label="Position" value={found.element.position.map((n) => n.toFixed(2)).join(', ')} />
           <Row label="Size" value={found.element.size.map((n) => n.toFixed(2)).join(', ')} />
 
-          <Stack direction="row" spacing={0.75} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" spacing={0.75} useFlexGap sx={{ mt: 1.5, flexWrap: 'wrap' }}>
             <Button size="small" variant="outlined" startIcon={<OpenWithIcon />} onClick={() => setTool('move')}>
               Move
             </Button>
@@ -100,7 +100,7 @@ export default function PropertiesPanel() {
       <Typography variant="caption" color="text.secondary">
         Active models
       </Typography>
-      <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mt: 0.75, mb: 1.5 }}>
+      <Stack direction="row" spacing={0.5} useFlexGap sx={{ mt: 0.75, mb: 1.5, flexWrap: 'wrap' }}>
         {active.map((m) => (
           <Chip key={m.id} size="small" label={m.name} variant="outlined" />
         ))}
@@ -130,8 +130,10 @@ export default function PropertiesPanel() {
               secondary={`${m.points[0].map((n) => n.toFixed(1)).join(', ')} → ${m.points[1]
                 .map((n) => n.toFixed(1))
                 .join(', ')}`}
-              primaryTypographyProps={{ variant: 'caption', fontWeight: 600 }}
-              secondaryTypographyProps={{ variant: 'caption' }}
+              slotProps={{
+                primary: { variant: 'caption', sx: { fontWeight: 600 } },
+                secondary: { variant: 'caption' },
+              }}
             />
           </ListItem>
         ))}

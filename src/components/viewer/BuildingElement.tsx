@@ -1,14 +1,29 @@
 import { useMemo, useRef } from 'react';
+import type { ThreeEvent } from '@react-three/fiber';
 import { Edges, useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
 import { useBimStore } from '../../store/bimStore';
+import type { BimElement, BimLayer, Vec3 } from '../../types/bim';
 
-function GltfMesh({ url }) {
+function GltfMesh({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   const cloned = useMemo(() => scene.clone(true), [scene]);
   return <primitive object={cloned} />;
 }
 
-function TreeMesh({ size, color, selected, showEdges, wireframe }) {
+function TreeMesh({
+  size,
+  color,
+  selected,
+  showEdges,
+  wireframe,
+}: {
+  size: Vec3;
+  color: string;
+  selected: boolean;
+  showEdges: boolean;
+  wireframe: boolean;
+}) {
   const trunkH = size[1] * 0.35;
   const crownR = Math.max(size[0], size[2]) * 0.9;
   return (
@@ -34,8 +49,20 @@ function TreeMesh({ size, color, selected, showEdges, wireframe }) {
   );
 }
 
-export default function BuildingElement({ element, layer, modelOffset = [0, 0, 0], explode = [0, 0, 0] }) {
-  const meshRef = useRef();
+interface BuildingElementProps {
+  element: BimElement;
+  layer: BimLayer;
+  modelOffset?: Vec3;
+  explode?: Vec3;
+}
+
+export default function BuildingElement({
+  element,
+  layer,
+  modelOffset = [0, 0, 0],
+  explode = [0, 0, 0],
+}: BuildingElementProps) {
+  const meshRef = useRef<THREE.Mesh>(null);
   const selected = useBimStore((s) => s.selectedElementId === element.id);
   const hovered = useBimStore((s) => s.hoveredElementId === element.id);
   const showEdges = useBimStore((s) => s.showEdges);
@@ -52,13 +79,14 @@ export default function BuildingElement({ element, layer, modelOffset = [0, 0, 0
   const transparent = opacity < 0.99 || isGlass;
   const color = selected ? '#ffb347' : hovered ? '#b7d7ef' : element.color || layer.color;
 
-  const position = [
+  const position: Vec3 = [
     element.position[0] + modelOffset[0] + explode[0],
     element.position[1] + modelOffset[1] + explode[1],
     element.position[2] + modelOffset[2] + explode[2],
   ];
+  const rotation: Vec3 = element.rotation || [0, 0, 0];
 
-  const handlePointerDown = (e) => {
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     if (tool === 'measure') {
       addMeasurePoint([e.point.x, e.point.y, e.point.z]);
@@ -69,7 +97,7 @@ export default function BuildingElement({ element, layer, modelOffset = [0, 0, 0
   };
 
   const hoverHandlers = {
-    onPointerOver: (e) => {
+    onPointerOver: (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation();
       if (tool === 'orbit') return;
       setHoveredElement(element.id);
@@ -81,7 +109,7 @@ export default function BuildingElement({ element, layer, modelOffset = [0, 0, 0
     return (
       <group
         position={position}
-        rotation={element.rotation || [0, 0, 0]}
+        rotation={rotation}
         onPointerDown={handlePointerDown}
         {...hoverHandlers}
       >
@@ -108,7 +136,7 @@ export default function BuildingElement({ element, layer, modelOffset = [0, 0, 0
     <mesh
       ref={meshRef}
       position={position}
-      rotation={element.rotation || [0, 0, 0]}
+      rotation={rotation}
       castShadow={!isGlass}
       receiveShadow={!isGlass}
       renderOrder={isGlass ? 2 : 0}

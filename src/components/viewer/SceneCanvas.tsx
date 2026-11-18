@@ -10,6 +10,7 @@ import {
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { useBimStore } from '../../store/bimStore';
+import type { Vec3 } from '../../types/bim';
 import BuildingElement from './BuildingElement';
 import MeasureOverlay from './MeasureOverlay';
 import SectionPlane from './SectionPlane';
@@ -21,14 +22,14 @@ function CameraRig() {
 
   useEffect(() => {
     if (!cameraPreset) return;
-    const presets = {
+    const presets: Record<string, [number, number, number]> = {
       iso: [18, 14, 18],
       top: [0, 28, 0.01],
       front: [0, 6, 22],
       side: [22, 6, 0],
     };
     const target = presets[cameraPreset] || presets.iso;
-    camera.position.set(...target);
+    camera.position.set(target[0], target[1], target[2]);
     camera.lookAt(0, 2, 0);
     camera.updateProjectionMatrix();
     setCameraPreset(null);
@@ -102,14 +103,14 @@ function ActiveModels() {
   return (
     <group>
       {active.map((model, modelIndex) => {
-        const modelOffset =
+        const modelOffset: Vec3 =
           active.length > 1
             ? [modelIndex * 16 - ((active.length - 1) * 16) / 2, 0, 0]
             : [0, 0, 0];
         return (
           <group key={model.id} name={model.name}>
             {model.layers.map((layer) => {
-              const explode = layer.explodeOffset.map((v) => v * explodeFactor);
+              const explode = layer.explodeOffset.map((v) => v * explodeFactor) as Vec3;
               return layer.elements.map((element) => (
                 <BuildingElement
                   key={element.id}
@@ -135,27 +136,37 @@ function ElementTransform() {
   const models = useBimStore((s) => s.models);
   const activeModelIds = useBimStore((s) => s.activeModelIds);
   const explodeFactor = useBimStore((s) => s.explodeFactor);
-  const meshRef = useRef();
+  const meshRef = useRef<THREE.Mesh>(null);
   const dragging = useRef(false);
 
   const found = selectedElementId ? findElement(selectedElementId) : null;
   const active = models.filter((m) => activeModelIds.includes(m.id));
   const modelIndex = found ? active.findIndex((m) => m.id === found.model.id) : -1;
-  const modelOffset =
+  const modelOffset: Vec3 =
     active.length > 1 && modelIndex >= 0
       ? [modelIndex * 16 - ((active.length - 1) * 16) / 2, 0, 0]
       : [0, 0, 0];
 
-  if (!found || tool !== 'move' || !found.element.visible || !found.layer.visible) {
+  if (!found || !selectedElementId || tool !== 'move' || !found.element.visible || !found.layer.visible) {
     return null;
   }
 
-  const explode = found.layer.explodeOffset.map((v) => v * explodeFactor);
-  const position = [
+  const explode = found.layer.explodeOffset.map((v) => v * explodeFactor) as Vec3;
+  const position: Vec3 = [
     found.element.position[0] + modelOffset[0] + explode[0],
     found.element.position[1] + modelOffset[1] + explode[1],
     found.element.position[2] + modelOffset[2] + explode[2],
   ];
+
+  const commitMove = () => {
+    if (!meshRef.current) return;
+    const p = meshRef.current.position;
+    moveElement(selectedElementId, [
+      p.x - modelOffset[0] - explode[0],
+      p.y - modelOffset[1] - explode[1],
+      p.z - modelOffset[2] - explode[2],
+    ]);
+  };
 
   return (
     <TransformControls
@@ -169,22 +180,11 @@ function ElementTransform() {
       }}
       onMouseUp={() => {
         dragging.current = false;
-        if (!meshRef.current) return;
-        const p = meshRef.current.position;
-        moveElement(selectedElementId, [
-          p.x - modelOffset[0] - explode[0],
-          p.y - modelOffset[1] - explode[1],
-          p.z - modelOffset[2] - explode[2],
-        ]);
+        commitMove();
       }}
       onObjectChange={() => {
-        if (!dragging.current || !meshRef.current) return;
-        const p = meshRef.current.position;
-        moveElement(selectedElementId, [
-          p.x - modelOffset[0] - explode[0],
-          p.y - modelOffset[1] - explode[1],
-          p.z - modelOffset[2] - explode[2],
-        ]);
+        if (!dragging.current) return;
+        commitMove();
       }}
     >
       <mesh ref={meshRef} position={position} visible={false}>

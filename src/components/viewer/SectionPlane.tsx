@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import { useBimStore } from '../../store/bimStore';
 
-export default function SectionPlane({ bounds = { min: -8, max: 10 } }) {
+interface SectionPlaneProps {
+  bounds?: { min: number; max: number };
+}
+
+export default function SectionPlane({ bounds = { min: -8, max: 10 } }: SectionPlaneProps) {
   const sectionEnabled = useBimStore((s) => s.sectionEnabled);
   const sectionAxis = useBimStore((s) => s.sectionAxis);
   const sectionValue = useBimStore((s) => s.sectionValue);
@@ -26,7 +30,10 @@ export default function SectionPlane({ bounds = { min: -8, max: 10 } }) {
         : [0, 0, 0];
 
   return (
-    <mesh position={pos} rotation={rot}>
+    <mesh
+      position={pos as [number, number, number]}
+      rotation={rot as [number, number, number]}
+    >
       <planeGeometry args={[size, size]} />
       <meshBasicMaterial
         color="#5b9fd4"

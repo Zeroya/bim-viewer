@@ -49,7 +49,7 @@ export default function ToolsPanel() {
         exclusive
         size="small"
         value={tool}
-        onChange={(_, v) => v && setTool(v)}
+        onChange={(_, v) => v && setTool(v as 'orbit' | 'select' | 'measure' | 'move')}
         className="tools-panel__group"
         fullWidth
       >
@@ -71,7 +71,7 @@ export default function ToolsPanel() {
         </ToggleButton>
       </ToggleButtonGroup>
 
-      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1, mb: 1.5 }}>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1, mb: 1.5 }}>
         {tool === 'measure' && 'Click two points on the model to measure distance.'}
         {tool === 'select' && 'Click an element to inspect properties and actions.'}
         {tool === 'move' && 'Select an element, then drag the gizmo axes.'}
@@ -83,7 +83,7 @@ export default function ToolsPanel() {
       <Typography variant="caption" color="text.secondary">
         Camera
       </Typography>
-      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 0.75, mb: 1.5 }}>
+      <Stack direction="row" spacing={0.75} useFlexGap sx={{ mt: 0.75, mb: 1.5, flexWrap: 'wrap' }}>
         <Button size="small" variant="outlined" onClick={() => setCameraPreset('iso')}>
           ISO
         </Button>
@@ -122,7 +122,11 @@ export default function ToolsPanel() {
           <Stack spacing={1.25} sx={{ mt: 1 }}>
             <FormControl size="small" fullWidth>
               <InputLabel>Axis</InputLabel>
-              <Select label="Axis" value={sectionAxis} onChange={(e) => setSectionAxis(e.target.value)}>
+              <Select
+                label="Axis"
+                value={sectionAxis}
+                onChange={(e) => setSectionAxis(e.target.value as 'x' | 'y' | 'z')}
+              >
                 <MenuItem value="y">Horizontal (Y)</MenuItem>
                 <MenuItem value="x">Vertical X</MenuItem>
                 <MenuItem value="z">Vertical Z</MenuItem>
@@ -134,7 +138,7 @@ export default function ToolsPanel() {
               max={1}
               step={0.01}
               value={sectionValue}
-              onChange={(_, v) => setSectionValue(v)}
+              onChange={(_, v) => setSectionValue(v as number)}
             />
           </Stack>
         )}

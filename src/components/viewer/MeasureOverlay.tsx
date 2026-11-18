@@ -1,8 +1,10 @@
 import { Line, Html } from '@react-three/drei';
 import { useBimStore } from '../../store/bimStore';
+import type { Vec3 } from '../../types/bim';
 
 export default function MeasureOverlay() {
-  const { measurePoints, measurements } = useBimStore();
+  const measurePoints = useBimStore((s) => s.measurePoints);
+  const measurements = useBimStore((s) => s.measurements);
 
   return (
     <group>
@@ -18,7 +20,7 @@ export default function MeasureOverlay() {
       )}
 
       {measurements.map((m) => {
-        const mid = [
+        const mid: Vec3 = [
           (m.points[0][0] + m.points[1][0]) / 2,
           (m.points[0][1] + m.points[1][1]) / 2 + 0.3,
           (m.points[0][2] + m.points[1][2]) / 2,

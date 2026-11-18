@@ -1,6 +1,7 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, Theme } from '@mui/material/styles';
+import type { ThemeMode } from '../types/bim';
 
-export const getTheme = (mode = 'dark') =>
+export const getTheme = (mode: ThemeMode = 'dark'): Theme =>
   createTheme({
     palette: {
       mode,

@@ -1,13 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
+import type { BimElement, BimLayer, BimModel, ElementDraft, Vec3 } from '../types/bim';
 
-const el = (partial) => ({
+const el = (partial: ElementDraft): BimElement => ({
   id: uuidv4(),
   visible: true,
-  rotation: [0, 0, 0],
+  rotation: [0, 0, 0] as Vec3,
   ...partial,
 });
 
-const layer = (name, color, explodeOffset, elements) => ({
+const layer = (
+  name: string,
+  color: string,
+  explodeOffset: Vec3,
+  elements: BimElement[]
+): BimLayer => ({
   id: uuidv4(),
   name,
   color,
@@ -18,7 +24,7 @@ const layer = (name, color, explodeOffset, elements) => ({
 });
 
 /** Modern villa — two floors, flat roof, terrace */
-export function createModernVilla() {
+export function createModernVilla(): BimModel {
   return {
     id: uuidv4(),
     name: 'Modern Villa',
@@ -88,7 +94,7 @@ export function createModernVilla() {
 }
 
 /** Urban townhouse — narrow footprint, pitched roof */
-export function createTownhouse() {
+export function createTownhouse(): BimModel {
   return {
     id: uuidv4(),
     name: 'Urban Townhouse',
@@ -142,7 +148,7 @@ export function createTownhouse() {
 }
 
 /** Glass pavilion with pool */
-export function createGlassPavilion() {
+export function createGlassPavilion(): BimModel {
   return {
     id: uuidv4(),
     name: 'Glass Pavilion',
@@ -188,9 +194,13 @@ export function createGlassPavilion() {
   };
 }
 
-export const PRESET_MODELS = [createModernVilla(), createTownhouse(), createGlassPavilion()];
+export const PRESET_MODELS: BimModel[] = [
+  createModernVilla(),
+  createTownhouse(),
+  createGlassPavilion(),
+];
 
-export function cloneModel(model) {
+export function cloneModel(model: BimModel): BimModel {
   return {
     ...model,
     id: uuidv4(),
@@ -200,15 +210,19 @@ export function cloneModel(model) {
       elements: layerItem.elements.map((element) => ({
         ...element,
         id: uuidv4(),
-        position: [...element.position],
-        size: [...element.size],
-        rotation: element.rotation ? [...element.rotation] : [0, 0, 0],
+        position: [...element.position] as Vec3,
+        size: [...element.size] as Vec3,
+        rotation: (element.rotation ? [...element.rotation] : [0, 0, 0]) as Vec3,
       })),
     })),
   };
 }
 
-export function createModelFromUpload(name, fileUrl, meta = {}) {
+export function createModelFromUpload(
+  name: string,
+  fileUrl: string,
+  meta: { description?: string } = {}
+): BimModel {
   return {
     id: uuidv4(),
     name,

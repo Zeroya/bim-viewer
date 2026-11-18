@@ -23,7 +23,7 @@ export default function BottomToolbar() {
 
   return (
     <Paper elevation={0} className={`bottom-toolbar ${isMobile ? 'is-mobile' : ''}`}>
-      <ToggleButtonGroup exclusive size="small" value={tool} onChange={(_, v) => v && setTool(v)}>
+      <ToggleButtonGroup exclusive size="small" value={tool} onChange={(_, v) => v && setTool(v as 'orbit' | 'select' | 'measure' | 'move')}>
         {TOOLS.map((t) => (
           <ToggleButton key={t.id} value={t.id} aria-label={t.label}>
             <Tooltip title={t.label}>

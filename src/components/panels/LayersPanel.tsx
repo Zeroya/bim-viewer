@@ -33,7 +33,7 @@ export default function LayersPanel() {
       </Typography>
 
       <Box className="layers-panel__explode" sx={{ mb: 1.5 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="caption" color="text.secondary">
             Explode layers
           </Typography>
@@ -45,14 +45,14 @@ export default function LayersPanel() {
           max={3}
           step={0.1}
           value={explodeFactor}
-          onChange={(_, v) => setExplodeFactor(v)}
+          onChange={(_, v) => setExplodeFactor(v as number)}
         />
       </Box>
 
       {activeModels.map((model) => (
         <Box key={model.id} className="layers-panel__model" sx={{ mb: 1.5 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={0.25}>
-            <Typography variant="caption" fontWeight={700}>
+          <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 0.25 }}>
+            <Typography variant="caption" sx={{ fontWeight: 700 }}>
               {model.name}
             </Typography>
             <Stack direction="row" spacing={0.25}>
@@ -87,7 +87,10 @@ export default function LayersPanel() {
                 </ListItemIcon>
                 <ListItemText
                   primary={layer.name}
-                  primaryTypographyProps={{ variant: 'caption', fontWeight: 600 }}
+                  slotProps={{
+                    primary: { variant: 'caption', sx: { fontWeight: 600 } },
+                    secondary: { component: 'div' },
+                  }}
                   secondary={
                     <Slider
                       size="small"
@@ -95,11 +98,10 @@ export default function LayersPanel() {
                       max={1}
                       step={0.05}
                       value={layer.opacity}
-                      onChange={(_, v) => setLayerOpacity(model.id, layer.id, v)}
+                      onChange={(_, v) => setLayerOpacity(model.id, layer.id, v as number)}
                       sx={{ mt: 0.25, maxWidth: 110 }}
                     />
                   }
-                  secondaryTypographyProps={{ component: 'div' }}
                 />
               </ListItem>
             ))}

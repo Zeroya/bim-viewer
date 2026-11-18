@@ -4,13 +4,15 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useBimStore } from '../../store/bimStore';
 import { createModelFromUpload } from '../../data/presetModels';
 
+type UploadStatus = { type: 'error' | 'success'; text: string } | null;
+
 export default function UploadPanel() {
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const addUploadedModel = useBimStore((s) => s.addUploadedModel);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState<UploadStatus>(null);
   const [loading, setLoading] = useState(false);
 
-  const onFiles = async (files) => {
+  const onFiles = async (files: FileList | null) => {
     if (!files?.length) return;
     setLoading(true);
     setStatus(null);
@@ -30,7 +32,8 @@ export default function UploadPanel() {
         setStatus({ type: 'success', text: `Model “${model.name}” added to the scene` });
       }
     } catch (e) {
-      setStatus({ type: 'error', text: e.message || 'Upload failed' });
+      const message = e instanceof Error ? e.message : 'Upload failed';
+      setStatus({ type: 'error', text: message });
     } finally {
       setLoading(false);
       if (inputRef.current) inputRef.current.value = '';

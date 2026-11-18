@@ -19,7 +19,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useBimStore } from '../../store/bimStore';
 import UploadPanel from './UploadPanel';
 
-const THUMB = {
+const THUMB: Record<string, string> = {
   villa: 'linear-gradient(135deg, #3a4a5a 0%, #8ab4c8 45%, #e8dcc8 100%)',
   townhouse: 'linear-gradient(135deg, #4a3030 0%, #c45e3a 50%, #d4cfc6 100%)',
   pavilion: 'linear-gradient(135deg, #1a3040 0%, #3aa0d0 40%, #5a8a68 100%)',
@@ -59,9 +59,9 @@ export default function ModelsPanel() {
                   style={{ background: THUMB[model.thumbnail] || THUMB.upload }}
                 />
                 <CardContent sx={{ py: 1, px: 1.25, '&:last-child': { pb: 1 } }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={0.5}>
-                    <Box minWidth={0}>
-                      <Typography variant="body2" fontWeight={600} noWrap>
+                  <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
                         {model.name}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" className="model-card__desc">
@@ -72,7 +72,7 @@ export default function ModelsPanel() {
                   </Stack>
                 </CardContent>
               </CardActionArea>
-              <Stack direction="row" spacing={0.25} className="model-card__actions" px={0.75} pb={0.75}>
+              <Stack direction="row" spacing={0.25} className="model-card__actions" sx={{ px: 0.75, pb: 0.75 }}>
                 <Tooltip title={active ? 'Hide from scene' : 'Add to scene'}>
                   <IconButton
                     size="small"
@@ -99,7 +99,7 @@ export default function ModelsPanel() {
 
       <Divider sx={{ my: 1.5 }} />
 
-      <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+      <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexWrap: 'wrap' }}>
         <Button
           size="small"
           variant="outlined"

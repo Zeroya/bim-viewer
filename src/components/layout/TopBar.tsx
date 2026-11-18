@@ -79,7 +79,7 @@ export default function TopBar() {
   return (
     <AppBar position="static" elevation={0} className="top-bar" color="transparent">
       <Toolbar className="top-bar__toolbar" variant="dense">
-        <Stack direction="row" alignItems="center" spacing={1} className="top-bar__brand">
+        <Stack direction="row" spacing={1} className="top-bar__brand" sx={{ alignItems: 'center' }}>
           {isMobile && (
             <IconButton
               size="small"
@@ -103,12 +103,12 @@ export default function TopBar() {
         </Stack>
 
         {!isMobile && (
-          <Stack direction="row" alignItems="center" spacing={0.75} className="top-bar__commands">
+          <Stack direction="row" spacing={0.75} className="top-bar__commands" sx={{ alignItems: 'center' }}>
             <ToggleButtonGroup
               exclusive
               size="small"
               value={tool}
-              onChange={(_, v) => v && setTool(v)}
+              onChange={(_, v) => v && setTool(v as 'orbit' | 'select' | 'measure' | 'move')}
               className="top-bar__tool-group"
             >
               <ToggleButton value="orbit" aria-label="Orbit">

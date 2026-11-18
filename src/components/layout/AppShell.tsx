@@ -21,10 +21,11 @@ import LayersPanel from '../panels/LayersPanel';
 import ToolsPanel from '../panels/ToolsPanel';
 import PropertiesPanel from '../panels/PropertiesPanel';
 import { useBimStore } from '../../store/bimStore';
+import type { MobilePanel } from '../../types/bim';
 
 const DRAWER_WIDTH = 300;
 
-function PanelHeader({ title, onClose }) {
+function PanelHeader({ title, onClose }: { title: string; onClose: () => void }) {
   return (
     <Box className="panel-header">
       <Typography variant="subtitle2" className="panel-header__title">
@@ -39,7 +40,7 @@ function PanelHeader({ title, onClose }) {
   );
 }
 
-function LeftDesktop({ onClose }) {
+function LeftDesktop({ onClose }: { onClose: () => void }) {
   return (
     <Box className="side-panel">
       <PanelHeader title="Models & Layers" onClose={onClose} />
@@ -51,7 +52,7 @@ function LeftDesktop({ onClose }) {
   );
 }
 
-function RightDesktop({ onClose }) {
+function RightDesktop({ onClose }: { onClose: () => void }) {
   return (
     <Box className="side-panel">
       <PanelHeader title="Tools & Properties" onClose={onClose} />
@@ -76,13 +77,13 @@ function MobileSheet() {
       onClose={() => setMobilePanel(null)}
       onOpen={() => setMobilePanel(tab)}
       disableSwipeToOpen={false}
-      PaperProps={{ className: 'mobile-sheet' }}
+      slotProps={{ paper: { className: 'mobile-sheet' } }}
     >
       <Box className="mobile-sheet__handle" />
       <Box className="mobile-sheet__header">
         <Tabs
           value={tab}
-          onChange={(_, v) => setMobilePanel(v)}
+          onChange={(_, v) => setMobilePanel(v as MobilePanel)}
           variant="scrollable"
           scrollButtons="auto"
         >
@@ -111,7 +112,7 @@ export default function AppShell() {
   const panels = useBimStore((s) => s.panels);
   const togglePanel = useBimStore((s) => s.togglePanel);
 
-  const drawerSx = (open, side) => ({
+  const drawerSx = (open: boolean, side: 'left' | 'right') => ({
     width: open ? DRAWER_WIDTH : 0,
     flexShrink: 0,
     whiteSpace: 'nowrap',

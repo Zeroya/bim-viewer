@@ -1,38 +1,112 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
 import { PRESET_MODELS, cloneModel } from '../data/presetModels';
+import type {
+  BimModel,
+  BimLayer,
+  CameraPreset,
+  ElementLookup,
+  Measurement,
+  MobilePanel,
+  PanelState,
+  SectionAxis,
+  ThemeMode,
+  ToolMode,
+  Vec3,
+} from '../types/bim';
+
+interface BimState {
+  models: BimModel[];
+  activeModelIds: string[];
+  selectedElementId: string | null;
+  hoveredElementId: string | null;
+  tool: ToolMode;
+  measurePoints: Vec3[];
+  measurements: Measurement[];
+  sectionEnabled: boolean;
+  sectionAxis: SectionAxis;
+  sectionValue: number;
+  explodeFactor: number;
+  showGrid: boolean;
+  showEdges: boolean;
+  wireframe: boolean;
+  isolateMode: boolean;
+  cameraPreset: CameraPreset | null;
+  fitRequestId: number;
+  screenshotRequestId: number;
+  panels: PanelState;
+  themeMode: ThemeMode;
+
+  setTool: (tool: ToolMode) => void;
+  setActiveModels: (ids: string[]) => void;
+  toggleActiveModel: (id: string) => void;
+  selectElement: (id: string | null) => void;
+  setHoveredElement: (id: string | null) => void;
+  toggleLayer: (modelId: string, layerId: string) => void;
+  setLayerOpacity: (modelId: string, layerId: string, opacity: number) => void;
+  setAllLayersVisible: (modelId: string, visible: boolean) => void;
+  hideElement: (elementId: string) => void;
+  showElement: (elementId: string) => void;
+  deleteElement: (elementId: string) => void;
+  moveElement: (elementId: string, position: Vec3) => void;
+  addMeasurePoint: (point: Vec3) => void;
+  clearMeasurements: () => void;
+  removeMeasurement: (id: string) => void;
+  setSectionEnabled: (sectionEnabled: boolean) => void;
+  setSectionAxis: (sectionAxis: SectionAxis) => void;
+  setSectionValue: (sectionValue: number) => void;
+  setExplodeFactor: (explodeFactor: number) => void;
+  setShowGrid: (showGrid: boolean) => void;
+  setShowEdges: (showEdges: boolean) => void;
+  setWireframe: (wireframe: boolean) => void;
+  setIsolateMode: (isolateMode: boolean) => void;
+  setCameraPreset: (cameraPreset: CameraPreset | null) => void;
+  requestFitView: () => void;
+  requestScreenshot: () => void;
+  isolateSelection: () => void;
+  showAllElements: () => void;
+  togglePanel: (key: 'left' | 'right') => void;
+  setMobilePanel: (mobile: MobilePanel) => void;
+  setThemeMode: (themeMode: ThemeMode) => void;
+  addUploadedModel: (model: BimModel) => void;
+  removeModel: (modelId: string) => void;
+  mergeActiveModels: () => void;
+  duplicateActiveModel: () => void;
+  resetView: () => void;
+  findElement: (elementId: string) => ElementLookup | null;
+}
 
 const createInitialState = () => {
   const models = PRESET_MODELS.map((m) => cloneModel(m));
   return {
     models,
     activeModelIds: [models[0].id],
-    selectedElementId: null,
-    hoveredElementId: null,
-    tool: 'orbit', // orbit | select | measure | move | section
-    measurePoints: [],
-    measurements: [],
+    selectedElementId: null as string | null,
+    hoveredElementId: null as string | null,
+    tool: 'orbit' as ToolMode,
+    measurePoints: [] as Vec3[],
+    measurements: [] as Measurement[],
     sectionEnabled: false,
-    sectionAxis: 'y',
+    sectionAxis: 'y' as SectionAxis,
     sectionValue: 0.5,
     explodeFactor: 0,
     showGrid: true,
     showEdges: false,
     wireframe: false,
     isolateMode: false,
-    cameraPreset: null,
+    cameraPreset: null as CameraPreset | null,
     fitRequestId: 0,
     screenshotRequestId: 0,
     panels: {
       left: true,
       right: true,
-      mobile: null, // models | layers | tools | properties | null
+      mobile: null as MobilePanel,
     },
-    themeMode: 'dark',
+    themeMode: 'dark' as ThemeMode,
   };
 };
 
-export const useBimStore = create((set, get) => ({
+export const useBimStore = create<BimState>((set, get) => ({
   ...createInitialState(),
 
   setTool: (tool) =>
@@ -142,7 +216,7 @@ export const useBimStore = create((set, get) => ({
         layers: model.layers.map((layer) => ({
           ...layer,
           elements: layer.elements.map((el) =>
-            el.id === elementId ? { ...el, position: [...position] } : el
+            el.id === elementId ? { ...el, position: [...position] as Vec3 } : el
           ),
         })),
       })),
@@ -162,7 +236,7 @@ export const useBimStore = create((set, get) => ({
           ...measurements,
           {
             id: uuidv4(),
-            points: next,
+            points: [next[0], next[1]],
             distance,
           },
         ],
@@ -190,6 +264,7 @@ export const useBimStore = create((set, get) => ({
   setCameraPreset: (cameraPreset) => set({ cameraPreset }),
   requestFitView: () => set((s) => ({ fitRequestId: s.fitRequestId + 1, cameraPreset: 'iso' })),
   requestScreenshot: () => set((s) => ({ screenshotRequestId: s.screenshotRequestId + 1 })),
+
   isolateSelection: () => {
     const { selectedElementId, models } = get();
     if (!selectedElementId) return;
@@ -207,6 +282,7 @@ export const useBimStore = create((set, get) => ({
       })),
     });
   },
+
   showAllElements: () =>
     set((state) => ({
       isolateMode: false,
@@ -254,7 +330,7 @@ export const useBimStore = create((set, get) => ({
 
     const active = models.filter((m) => activeModelIds.includes(m.id));
     const offsetStep = 12;
-    const mergedLayers = [];
+    const mergedLayers: BimLayer[] = [];
 
     active.forEach((model, index) => {
       const ox = index * offsetStep;
@@ -263,7 +339,7 @@ export const useBimStore = create((set, get) => ({
         const shifted = layer.elements.map((el) => ({
           ...el,
           id: uuidv4(),
-          position: [el.position[0] + ox, el.position[1], el.position[2]],
+          position: [el.position[0] + ox, el.position[1], el.position[2]] as Vec3,
         }));
         if (existing) {
           existing.elements = [...existing.elements, ...shifted];
@@ -281,7 +357,7 @@ export const useBimStore = create((set, get) => ({
       });
     });
 
-    const merged = {
+    const merged: BimModel = {
       id: uuidv4(),
       name: `Merged · ${active.map((m) => m.name).join(' + ')}`,
       description: 'Merged model',
