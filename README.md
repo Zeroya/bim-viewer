@@ -2,7 +2,7 @@
 
 A React BIM-style 3D viewer for inspecting building models in the browser. Switch between house models, toggle layers, measure distances, move or hide elements, cut sections, upload GLB/GLTF files, and merge scenes.
 
-![Desktop overview — real capture from the running app](docs/screenshots/desktop.png)
+<img width="2559" height="1188" alt="image" src="https://github.com/user-attachments/assets/e1aad150-4de2-400b-8e02-6cfeec172641" />
 
 ## Features
 
@@ -15,7 +15,7 @@ A React BIM-style 3D viewer for inspecting building models in the browser. Switc
 - **Responsive UI:** side panels on desktop (open/close), bottom sheet on mobile
 - **MUI + SCSS** theming (dark / light)
 
-![Tools panel with section cut enabled — real capture](docs/screenshots/tools.png)
+<img width="1280" height="595" alt="image" src="https://github.com/user-attachments/assets/495f0e5c-894d-48ea-ada0-4a00a88fbea7" />
 
 ## Screenshots
 
